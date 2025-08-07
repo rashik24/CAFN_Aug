@@ -15,7 +15,7 @@ os.environ["MAPBOX_API_KEY"] = "pk.eyJ1IjoicnNpZGRpcTIiLCJhIjoiY21jbjcwNWtkMHV5b
 
 ODM_CSV = "ODM FBCENC 2.csv"
 TRACTS_SHP = "cb_2023_37_tract_500k.shp"
-
+OPENCAGE_API_KEY = "f53bdda785074d5499b7a4d29d5acd1f"
 geocoder = OpenCageGeocode(OPENCAGE_API_KEY)
 
 # ─── STREAMLIT ───────────────────────────────────────────────────────────
