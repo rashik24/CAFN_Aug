@@ -1,0 +1,9 @@
+geopandas
+streamlit
+pydeck
+pandas
+numpy
+opencage
+python-dateutil
+geopy
+shapely
