@@ -141,59 +141,58 @@ if user_address:
     else:
         st.warning("No pantries match your filters.")
 
-    if not agencies_nearby.empty:
-        agencies_nearby = agencies_nearby.copy()
-        agencies_nearby["total_traveltime"] = agencies_nearby["total_traveltime"].round(2)
-        agencies_nearby["total_miles"] = agencies_nearby["total_miles"].round(2)
+    if not filtered_df.empty:
+    filtered_df = filtered_df.copy()
+    filtered_df["total_traveltime"] = filtered_df["total_traveltime"].round(2)
+    filtered_df["total_miles"] = filtered_df["total_miles"].round(2)
 
-        display_cols = ["agency name", "address","operating hours","contact", "total_traveltime", "total_miles"]
-        st.dataframe(agencies_nearby[display_cols].drop_duplicates().sort_values("total_traveltime"))
+    display_cols = ["agency name", "address", "operating hours", "contact", "total_traveltime", "total_miles"]
+    st.dataframe(filtered_df[display_cols].drop_duplicates().sort_values("total_traveltime"))
 
-        # ─── MAP ────────────────────────────────────────────────────────
+    # ─── MAP ────────────────────────────────────────────────────────
 
-        user_df = pd.DataFrame({
-            "name": ["Your Location"],
-            "latitude": [user_lat],
-            "longitude": [user_lon],
-            "color_r": [0], "color_g": [0], "color_b": [255],
-            "tooltip": ["Your Location"]
-        })
+    user_df = pd.DataFrame({
+        "name": ["Your Location"],
+        "latitude": [user_lat],
+        "longitude": [user_lon],
+        "color_r": [0], "color_g": [0], "color_b": [255],
+        "tooltip": ["Your Location"]
+    })
 
-        agency_map_df = agencies_nearby.copy()
-        agency_map_df["color_r"] = 255
-        agency_map_df["color_g"] = 0
-        agency_map_df["color_b"] = 0
-        agency_map_df["tooltip"] = (
-            "Agency: " + agency_map_df["agency name"] +
-            "<br>Travel Time (min): " + agency_map_df["total_traveltime"].astype(str) +
-            "<br>Distance (miles): " + agency_map_df["total_miles"].astype(str)
-        )
-        #agency_map_df = agency_map_df.rename(columns={"latitude": "latitude", "longitude": "longitude"})
+    agency_map_df = filtered_df.copy()
+    agency_map_df["color_r"] = 255
+    agency_map_df["color_g"] = 0
+    agency_map_df["color_b"] = 0
+    agency_map_df["tooltip"] = (
+        "Agency: " + agency_map_df["agency name"] +
+        "<br>Travel Time (min): " + agency_map_df["total_traveltime"].astype(str) +
+        "<br>Distance (miles): " + agency_map_df["total_miles"].astype(str)
+    )
 
-        combined_df = pd.concat([user_df, agency_map_df], ignore_index=True)
+    combined_df = pd.concat([user_df, agency_map_df], ignore_index=True)
 
-        layer = pdk.Layer(
-            "ScatterplotLayer",
-            combined_df,
-            get_position='[longitude, latitude]',
-            get_color='[color_r, color_g, color_b]',
-            get_radius=250,
-            pickable=True,
-        )
+    layer = pdk.Layer(
+        "ScatterplotLayer",
+        combined_df,
+        get_position='[longitude, latitude]',
+        get_color='[color_r, color_g, color_b]',
+        get_radius=250,
+        pickable=True,
+    )
 
-        tooltip = {"html": "{tooltip}", "style": {"color": "white"}}
+    tooltip = {"html": "{tooltip}", "style": {"color": "white"}}
 
-        view_state = pdk.ViewState(
-            longitude=user_lon, latitude=user_lat, zoom=10, pitch=0
-        )
+    view_state = pdk.ViewState(
+        longitude=user_lon, latitude=user_lat, zoom=10, pitch=0
+    )
 
-        deck = pdk.Deck(
-            map_style='mapbox://styles/mapbox/light-v9',
-            initial_view_state=view_state,
-            layers=[layer],
-            tooltip=tooltip
-        )
+    deck = pdk.Deck(
+        map_style='mapbox://styles/mapbox/light-v9',
+        initial_view_state=view_state,
+        layers=[layer],
+        tooltip=tooltip
+    )
 
-        st.pydeck_chart(deck)
-    else:
-        st.warning("No agencies found within your search radius.")
+    st.pydeck_chart(deck)
+else:
+    st.warning("No agencies found matching your filters.")
