@@ -76,7 +76,7 @@ if user_address:
       
     # 🚨 CASCADING FILTER UI SECTION
     # ===============================
-    
+    df=agencies_nearby
     # Independent Choice filter
     show_choice_only = st.checkbox("Show only Choice Pantries", value=False)
     
