@@ -101,7 +101,7 @@ if user_address:
             "<br>Travel Time (min): " + agency_map_df["total_traveltime"].astype(str) +
             "<br>Distance (miles): " + agency_map_df["total_miles"].astype(str)
         )
-        agency_map_df = agency_map_df.rename(columns={"agency name": "name", "latitude": "latitude", "longitude": "longitude"})
+        #agency_map_df = agency_map_df.rename(columns={"latitude": "latitude", "longitude": "longitude"})
 
         combined_df = pd.concat([user_df, agency_map_df], ignore_index=True)
 
