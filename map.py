@@ -77,44 +77,69 @@ if user_address:
     # 🚨 CASCADING FILTER UI SECTION
     # ===============================
     
-    st.subheader("Filter Options")
+    # Independent Choice filter
+    show_choice_only = st.checkbox("Show only Choice Pantries", value=False)
     
-    # 1️⃣ Unique values from filter_1
-    filter_1_values = sorted(agencies_nearby["filter_1"].dropna().unique())
-    selected_filter_1 = None
-    selected_filter_2 = None
+    # ─── FILTER 1 ────────────────────────────────────────────────────────────
+    st.markdown("### Select Categories")
+    filter_1_vals = sorted(df["filter_1"].dropna().unique())
+    selected_filter_1 = st.multiselect(
+        label="",
+        options=filter_1_vals,
+        default=[],
+        key="filter_1_multi",
+        label_visibility="collapsed"
+    )
     
-    # Display filter_1 as buttons (horizontal or vertical)
-    for val in filter_1_values:
-        if st.button(f"Filter 1: {val}"):
-            selected_filter_1 = val
-            st.session_state['selected_filter_1'] = val
+    # Style with color (blue buttons concept simulated using markdown)
+    for val in filter_1_vals:
+        color = "#1f77b4"  # blue
+        is_selected = val in selected_filter_1
+        st.markdown(
+            f"<div style='padding: 6px; background-color:{color if is_selected else '#e0e0e0'}; "
+            f"color:white; border-radius:5px; margin-bottom:5px'>{val}</div>",
+            unsafe_allow_html=True
+        )
     
-    # Retain session state on rerun
-    selected_filter_1 = st.session_state.get('selected_filter_1', None)
+    # Filter by Filter 1
+    filtered_df = df[df["filter_1"].isin(selected_filter_1)] if selected_filter_1 else df.copy()
     
-    # 2️⃣ Show second layer of buttons from filter_2
-    if selected_filter_1:
-        filtered_by_1 = agencies_nearby[agencies_nearby["filter_1"] == selected_filter_1]
-        filter_2_values = sorted(filtered_by_1["filter_2"].dropna().unique())
+    # ─── FILTER 2 ────────────────────────────────────────────────────────────
+    if not filtered_df.empty:
+        st.markdown("### Select Subcategories")
+        filter_2_vals = sorted(filtered_df["filter_2"].dropna().unique())
+        selected_filter_2 = st.multiselect(
+            label="",
+            options=filter_2_vals,
+            default=[],
+            key="filter_2_multi",
+            label_visibility="collapsed"
+        )
     
-        for val in filter_2_values:
-            if st.button(f"Filter 2: {val}"):
-                selected_filter_2 = val
-                st.session_state['selected_filter_2'] = val
+        # Visual highlight for selected Filter 2
+        for val in filter_2_vals:
+            color = "#ff7f0e"  # orange
+            is_selected = val in selected_filter_2
+            st.markdown(
+                f"<div style='padding: 6px; background-color:{color if is_selected else '#e0e0e0'}; "
+                f"color:white; border-radius:5px; margin-bottom:5px'>{val}</div>",
+                unsafe_allow_html=True
+            )
     
-        selected_filter_2 = st.session_state.get('selected_filter_2', None)
-    
-        # Update agencies_nearby based on both filters
-        agencies_nearby = agencies_nearby[agencies_nearby["filter_1"] == selected_filter_1]
-    
+        # Filter by Filter 2
         if selected_filter_2:
-            agencies_nearby = agencies_nearby[agencies_nearby["filter_2"] == selected_filter_2]
+            filtered_df = filtered_df[filtered_df["filter_2"].isin(selected_filter_2)]
     
-    # 3️⃣ Choice Pantry filter (independent)
-    show_choice_only = st.checkbox("Show only Choice Pantries")
+    # ─── CHOICE FILTER ───────────────────────────────────────────────────────
     if show_choice_only:
-        agencies_nearby = agencies_nearby[agencies_nearby["choice"] == 1]
+        filtered_df = filtered_df[filtered_df["choice"] == 1]
+    
+    # ─── DISPLAY RESULTS ─────────────────────────────────────────────────────
+    if not filtered_df.empty:
+        st.success(f"{len(filtered_df)} pantries match your filters.")
+        st.dataframe(filtered_df[["agency name", "address", "filter_1", "filter_2", "total_traveltime", "total_miles"]])
+    else:
+        st.warning("No pantries match your filters.")
 
     if not agencies_nearby.empty:
         agencies_nearby = agencies_nearby.copy()
