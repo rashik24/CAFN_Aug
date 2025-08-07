@@ -134,8 +134,14 @@ if not filtered_df.empty:
     filtered_df["total_miles"] = filtered_df["total_miles"].round(2)
 
     st.success(f"{len(filtered_df)} pantries match your filters.")
-    display_cols = ["agency name", "address", "operating hours", "contact", "total_traveltime", "total_miles"]
-    st.dataframe(filtered_df[display_cols].drop_duplicates().sort_values("total_traveltime"))
+    if mode == "ZIP Code":
+        display_cols = ["agency name", "address", "operating hours"]
+        unique_df = filtered_df.drop_duplicates(subset=["agency name"])
+        st.dataframe(unique_df[display_cols].sort_values("agency name"))
+    else:
+        display_cols = ["agency name", "address", "operating hours", "contact", "total_traveltime", "total_miles"]
+        st.dataframe(filtered_df[display_cols].drop_duplicates().sort_values("total_traveltime"))
+
 
     # ─── MAP DISPLAY ────────────────────────────────────────────────
     if user_lat and user_lon:
