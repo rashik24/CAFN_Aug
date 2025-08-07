@@ -69,11 +69,13 @@ if mode == "Address" and user_lat is not None and user_lon is not None:
         st.error("Could not match your location to a census tract.")
         st.stop()
 elif mode == "ZIP Code" and zip_code:
-    odm_df = odm_df[odm_df["zip"].astype(str) == zip_code.strip()]
-    if odm_df.empty:
+    zip_filtered = odm_df[odm_df["zip"].astype(str) == zip_code.strip()]
+    if zip_filtered.empty:
         st.warning("No agencies found in that ZIP code.")
         st.stop()
+    odm_df = zip_filtered.drop_duplicates(subset=["agency name", "address"])
     user_geoid = None
+
 
 if user_geoid is not None:
     agencies_nearby = odm_df[
