@@ -97,7 +97,7 @@ if user_address:
         agency_map_df["color_g"] = 0
         agency_map_df["color_b"] = 0
         agency_map_df["tooltip"] = (
-            "Agency: " + agency_map_df["agency_name"] +
+            "Agency: " + agency_map_df["agency name"] +
             "<br>Travel Time (min): " + agency_map_df["total_traveltime"].astype(str) +
             "<br>Distance (miles): " + agency_map_df["total_miles"].astype(str)
         )
