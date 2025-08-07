@@ -73,6 +73,48 @@ if user_address:
     if agencies_nearby.empty:
         st.warning("No agencies directly linked to your tract. Showing agencies within 60-minute travel time.")
         agencies_nearby = odm_df[odm_df["total_traveltime"] <= 60]
+      
+    # 🚨 CASCADING FILTER UI SECTION
+    # ===============================
+    
+    st.subheader("Filter Options")
+    
+    # 1️⃣ Unique values from filter_1
+    filter_1_values = sorted(agencies_nearby["filter_1"].dropna().unique())
+    selected_filter_1 = None
+    selected_filter_2 = None
+    
+    # Display filter_1 as buttons (horizontal or vertical)
+    for val in filter_1_values:
+        if st.button(f"Filter 1: {val}"):
+            selected_filter_1 = val
+            st.session_state['selected_filter_1'] = val
+    
+    # Retain session state on rerun
+    selected_filter_1 = st.session_state.get('selected_filter_1', None)
+    
+    # 2️⃣ Show second layer of buttons from filter_2
+    if selected_filter_1:
+        filtered_by_1 = agencies_nearby[agencies_nearby["filter_1"] == selected_filter_1]
+        filter_2_values = sorted(filtered_by_1["filter_2"].dropna().unique())
+    
+        for val in filter_2_values:
+            if st.button(f"Filter 2: {val}"):
+                selected_filter_2 = val
+                st.session_state['selected_filter_2'] = val
+    
+        selected_filter_2 = st.session_state.get('selected_filter_2', None)
+    
+        # Update agencies_nearby based on both filters
+        agencies_nearby = agencies_nearby[agencies_nearby["filter_1"] == selected_filter_1]
+    
+        if selected_filter_2:
+            agencies_nearby = agencies_nearby[agencies_nearby["filter_2"] == selected_filter_2]
+    
+    # 3️⃣ Choice Pantry filter (independent)
+    show_choice_only = st.checkbox("Show only Choice Pantries")
+    if show_choice_only:
+        agencies_nearby = agencies_nearby[agencies_nearby["choice"] == 1]
 
     if not agencies_nearby.empty:
         agencies_nearby = agencies_nearby.copy()
