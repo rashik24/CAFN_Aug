@@ -79,7 +79,7 @@ if user_address:
         agencies_nearby["total_traveltime"] = agencies_nearby["total_traveltime"].round(2)
         agencies_nearby["total_miles"] = agencies_nearby["total_miles"].round(2)
 
-        display_cols = ["Agency Name", "Address", "total_traveltime", "total_miles"]
+        display_cols = ["agency Name", "address", "total_traveltime", "total_miles"]
         st.dataframe(agencies_nearby[display_cols].drop_duplicates().sort_values("total_traveltime"))
 
         # ─── MAP ────────────────────────────────────────────────────────
