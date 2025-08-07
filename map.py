@@ -79,7 +79,7 @@ if user_address:
         agencies_nearby["total_traveltime"] = agencies_nearby["total_traveltime"].round(2)
         agencies_nearby["total_miles"] = agencies_nearby["total_miles"].round(2)
 
-        display_cols = ["agency Name", "address", "total_traveltime", "total_miles"]
+        display_cols = ["agency name", "address", "total_traveltime", "total_miles"]
         st.dataframe(agencies_nearby[display_cols].drop_duplicates().sort_values("total_traveltime"))
 
         # ─── MAP ────────────────────────────────────────────────────────
@@ -101,7 +101,7 @@ if user_address:
             "<br>Travel Time (min): " + agency_map_df["total_traveltime"].astype(str) +
             "<br>Distance (miles): " + agency_map_df["total_miles"].astype(str)
         )
-        agency_map_df = agency_map_df.rename(columns={"agency_name": "name", "latitude": "latitude", "longitude": "longitude"})
+        agency_map_df = agency_map_df.rename(columns={"agency name": "name", "latitude": "latitude", "longitude": "longitude"})
 
         combined_df = pd.concat([user_df, agency_map_df], ignore_index=True)
 
