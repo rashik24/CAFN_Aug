@@ -22,7 +22,7 @@ geocoder = OpenCageGeocode(OPENCAGE_API_KEY)
 # ─── STREAMLIT APP ───────────────────────────────────────────────────────
 
 st.set_page_config(page_title="CAFN Food Pantries", layout="wide")
-st.title("Open Food Pantries Finder")
+st.title("CAFN Food Finder")
 
 mode = st.radio("Choose input mode:", ["Address", "ZIP Code"])
 
